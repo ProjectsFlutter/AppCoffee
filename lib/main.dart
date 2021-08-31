@@ -1,4 +1,4 @@
-import 'package:app_coffee/src/coffee-list.dart';
+import 'package:app_coffee/src/coffee-home.dart';
 import 'package:flutter/material.dart';
  
 void main() => runApp(MyApp());
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Coffee App',
-      home: CoffeeList()
+      home: CoffeeHome()
     );
   }
 }
