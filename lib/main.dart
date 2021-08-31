@@ -6,9 +6,10 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData.light(), 
-      child: CoffeeList()
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Coffee App',
+      home: CoffeeList()
     );
   }
 }
