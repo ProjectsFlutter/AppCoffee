@@ -70,32 +70,36 @@ class _CoffeeListState extends State<CoffeeList> {
               color: Colors.red,
             ) 
           ),
-          PageView.builder(
-            controller: _pageCoffeeController,
-            itemCount: coffees.length + 1,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (context, index){
-              if (index == 0) return SizedBox.shrink();
+          Transform.scale(
+            scale: 1.6,
+            alignment: Alignment.bottomCenter,
+            child: PageView.builder(
+              controller: _pageCoffeeController,
+              itemCount: coffees.length + 1,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (context, index){
+                if (index == 0) return SizedBox.shrink();
 
-              final _result = _currentPage - index + 1;
-              final _value = -0.4 * _result + 1; 
-              final _opacity = _value.clamp(0.0, 1.0);
+                final _result = _currentPage - index + 1;
+                final _value = -0.4 * _result + 1; 
+                final _opacity = _value.clamp(0.0, 1.0);
 
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Transform(
-                  alignment: Alignment.bottomCenter,
-                  transform: Matrix4.identity()
-                  ..setEntry(3,2,0.001)
-                  ..translate(0.0, _size.height / 2.6 * (1 - _value).abs())
-                  ..scale(_value),
-                  child: Opacity(
-                    opacity: _opacity,
-                    child: Image.asset(coffees[index - 1].image)
-                  )
-                ),
-              );
-            }
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Transform(
+                    alignment: Alignment.bottomCenter,
+                    transform: Matrix4.identity()
+                    ..setEntry(3,2,0.001)
+                    ..translate(0.0, _size.height / 2.6 * (1 - _value).abs())
+                    ..scale(_value),
+                    child: Opacity(
+                      opacity: _opacity,
+                      child: Image.asset(coffees[index - 1].image)
+                    )
+                  ),
+                );
+              }
+            ),
           )
         ],
       ),
