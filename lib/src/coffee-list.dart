@@ -66,9 +66,21 @@ class _CoffeeListState extends State<CoffeeList> {
             top: 0,
             right: 0,
             height: 100.0,
-            child: Container(
-              color: Colors.red,
-            ) 
+            child: Column(
+              children: [
+                AnimatedSwitcher(
+                  key: Key(coffees[_currentPage.toInt()].name),
+                  duration: Duration(milliseconds: 300),
+                  child: Text(
+                    '\$${coffees[_currentPage.toInt()].price.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 30, 
+                      fontWeight: FontWeight.w400,
+                      color: Colors.brown[400]
+                    )),
+                )
+              ],
+            )
           ),
           Transform.scale(
             scale: 1.6,
@@ -94,7 +106,7 @@ class _CoffeeListState extends State<CoffeeList> {
                     ..scale(_value),
                     child: Opacity(
                       opacity: _opacity,
-                      child: Image.asset(coffees[index - 1].image)
+                      child: Image.asset(coffees[index - 1].image, fit: BoxFit.fitHeight)
                     )
                   ),
                 );
