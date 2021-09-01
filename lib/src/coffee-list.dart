@@ -83,48 +83,58 @@ class _CoffeeListState extends State<CoffeeList> {
             top: 0,
             right: 0,
             height: 100.0,
-            child: Column(
-              children: [
-                Expanded(
-                  child: PageView.builder(
-                    controller: _pageTextController,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: coffees.length,
-                    itemBuilder: (context, index){
-                      final _opacity = (1 - (index - _textPage).abs()).clamp(0.0, 1.0);
-                      return Opacity(
-                        opacity: _opacity,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: _size.width * 0.2 ),
-                          child: Hero(
-                            tag: 'text_${ coffees[index].name }',
-                            child: Material(
-                              child: Text(
-                                coffees[index].name,
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.brown[900]),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 1.0, end: 0.0),
+              builder: (context, value, child) {
+                return Transform.translate(
+                      offset: Offset(0, -100 * value), 
+                      child: child
+                );
+              },
+              duration: Duration(milliseconds: 500),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _pageTextController,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: coffees.length,
+                      itemBuilder: (context, index){
+                        final _opacity = (1 - (index - _textPage).abs()).clamp(0.0, 1.0);
+                        return Opacity(
+                          opacity: _opacity,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: _size.width * 0.2 ),
+                            child: Hero(
+                              tag: 'text_${ coffees[index].name }',
+                              child: Material(
+                                child: Text(
+                                  coffees[index].name,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.brown[900]),
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                      );
-                    }
+                          )
+                        );
+                      }
+                    )
+                  ),
+                  AnimatedSwitcher(
+                    key: Key(coffees[_currentPage.toInt()].name),
+                    duration: Duration(milliseconds: 300),
+                    child: Text(
+                      '\$${coffees[_currentPage.toInt()].price.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: 30, 
+                        fontWeight: FontWeight.w400,
+                        color: Colors.brown[400]
+                      )),
                   )
-                ),
-                AnimatedSwitcher(
-                  key: Key(coffees[_currentPage.toInt()].name),
-                  duration: Duration(milliseconds: 300),
-                  child: Text(
-                    '\$${coffees[_currentPage.toInt()].price.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontSize: 30, 
-                      fontWeight: FontWeight.w400,
-                      color: Colors.brown[400]
-                    )),
-                )
-              ],
+                ],
+              ),
             )
           ),
           Transform.scale(
