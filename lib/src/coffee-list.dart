@@ -1,3 +1,4 @@
+import 'package:app_coffee/src/coffee-details.dart';
 import 'package:app_coffee/src/coffee.dart';
 import 'package:flutter/material.dart';
 
@@ -95,12 +96,17 @@ class _CoffeeListState extends State<CoffeeList> {
                         opacity: _opacity,
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: _size.width * 0.2 ),
-                          child: Text(
-                            coffees[index].name,
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.brown[900]),
+                          child: Hero(
+                            tag: 'text_${ coffees[index].name }',
+                            child: Material(
+                              child: Text(
+                                coffees[index].name,
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.brown[900]),
+                              ),
+                            ),
                           ),
                         )
                       );
@@ -140,24 +146,36 @@ class _CoffeeListState extends State<CoffeeList> {
                 final _value = -0.4 * _result + 1; 
                 final _opacity = _value.clamp(0.0, 1.0);
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Transform(
-                    alignment: Alignment.bottomCenter,
-                    transform: Matrix4.identity()
-                    ..setEntry(3,2,0.001)
-                    ..translate(0.0, _size.height / 2.6 * (1 - _value).abs())
-                    ..scale(_value),
-                    child: Opacity(
-                      opacity: _opacity,
-                      child: Hero(
-                        tag: coffees[index - 1].name,
-                        child: Image.asset(
-                          coffees[index - 1].image, 
-                          fit: BoxFit.fitHeight
+                return GestureDetector(
+                  onTap: () {
+                      Navigator.of(context).push(PageRouteBuilder(
+                          transitionDuration: Duration(microseconds: 650),
+                          pageBuilder: (context, animation, _) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: CoffeeDetails(coffee: coffees[index - 1]),
+                            );
+                          }));
+                    },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Transform(
+                      alignment: Alignment.bottomCenter,
+                      transform: Matrix4.identity()
+                      ..setEntry(3,2,0.001)
+                      ..translate(0.0, _size.height / 2.6 * (1 - _value).abs())
+                      ..scale(_value),
+                      child: Opacity(
+                        opacity: _opacity,
+                        child: Hero(
+                          tag: coffees[index - 1].name,
+                          child: Image.asset(
+                            coffees[index - 1].image, 
+                            fit: BoxFit.fitHeight
+                        )
+                        )
                       )
-                      )
-                    )
+                    ),
                   ),
                 );
               }
