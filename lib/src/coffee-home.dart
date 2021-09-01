@@ -52,7 +52,7 @@ class _Image5 extends StatelessWidget {
       left: 0,
       bottom: _size.height * -0.8,
       child: Hero(
-        tag: _coffee.name,
+        tag: 'image_${_coffee.name}',
         child: Image.asset(
           _coffee.image,
           fit: BoxFit.cover
@@ -75,7 +75,7 @@ class _Image4 extends StatelessWidget {
       left: 0,
       bottom: 0,
       child: Hero(
-        tag: _coffee.name,
+        tag: 'image_${_coffee.name}',
         child: Image.asset(
          _coffee.image,
           fit: BoxFit.cover,
@@ -98,7 +98,7 @@ class _Image3 extends StatelessWidget {
       left: 0,
       top: _size.height * 0.15,
       child: Hero(
-        tag: _coffee.name,
+        tag: 'image_${_coffee.name}',
         child: Image.asset(_coffee.image),
       ),
     );
@@ -118,7 +118,7 @@ class _Image2 extends StatelessWidget {
       left: 0,
       top: _size.height * 0.06,
       child: Hero(
-        tag: _coffee.name,
+        tag: 'image_${_coffee.name}',
         child: Image.asset(_coffee.image),
       ),
     );
