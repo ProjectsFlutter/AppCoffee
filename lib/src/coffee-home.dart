@@ -45,7 +45,7 @@ class CoffeeHome extends StatelessWidget {
               left: 0,
               top: _size.height * 0.06,
               child: Hero(
-                tag: '6',
+                tag: coffees[8].name,
                 child: Image.asset(coffees[8].image),
               ),
             ),
@@ -55,7 +55,7 @@ class CoffeeHome extends StatelessWidget {
               left: 0,
               top: _size.height * 0.15,
               child: Hero(
-                tag: '7',
+                tag: coffees[10].name,
                 child: Image.asset(coffees[10].image),
               ),
             ),
@@ -65,7 +65,7 @@ class CoffeeHome extends StatelessWidget {
               left: 0,
               bottom: 0,
               child: Hero(
-                tag: '8',
+                tag: coffees[7].name,
                 child: Image.asset(
                   coffees[7].image,
                   fit: BoxFit.cover,
@@ -78,7 +78,7 @@ class CoffeeHome extends StatelessWidget {
               left: 0,
               bottom: _size.height * -0.8,
               child: Hero(
-                tag: '9',
+                tag: coffees[9].name,
                 child: Image.asset(
                   coffees[0].image,
                   fit: BoxFit.cover,

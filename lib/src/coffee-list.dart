@@ -1,6 +1,8 @@
 import 'package:app_coffee/src/coffee.dart';
 import 'package:flutter/material.dart';
 
+ const double _initialPage = 8.0;
+
 class CoffeeList extends StatefulWidget {
   @override
   _CoffeeListState createState() => _CoffeeListState();
@@ -8,14 +10,15 @@ class CoffeeList extends StatefulWidget {
 
 class _CoffeeListState extends State<CoffeeList> {
   
-  double _currentPage = 0.0;
-  double _textPage = 0.0;
+  double _currentPage = _initialPage;
+  double _textPage = _initialPage;
 
   final _pageCoffeeController = PageController(
-    viewportFraction: 0.35
+    viewportFraction: 0.35,
+    initialPage: _initialPage.toInt()
   );
 
-  final _pageTextController = PageController();
+  final _pageTextController = PageController(initialPage: _initialPage.toInt());
 
   void _coffeScrollListener(){
     setState(() {
@@ -147,7 +150,11 @@ class _CoffeeListState extends State<CoffeeList> {
                     ..scale(_value),
                     child: Opacity(
                       opacity: _opacity,
-                      child: Image.asset(coffees[index - 1].image, fit: BoxFit.fitHeight)
+                      child: Hero(
+                        tag: coffees[index - 1].name,
+                        child: Image.asset(coffees[index - 1].image, 
+                        fit: BoxFit.fitHeight)
+                      )
                     )
                   ),
                 );
