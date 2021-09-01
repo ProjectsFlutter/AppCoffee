@@ -45,8 +45,8 @@ class CoffeeHome extends StatelessWidget {
               left: 0,
               top: _size.height * 0.06,
               child: Hero(
-                tag: coffees[8].name,
-                child: Image.asset(coffees[8].image),
+                tag: coffees[2].name,
+                child: Image.asset(coffees[2].image),
               ),
             ),
             Positioned(
@@ -55,8 +55,8 @@ class CoffeeHome extends StatelessWidget {
               left: 0,
               top: _size.height * 0.15,
               child: Hero(
-                tag: coffees[10].name,
-                child: Image.asset(coffees[10].image),
+                tag: coffees[3].name,
+                child: Image.asset(coffees[3].image),
               ),
             ),
             Positioned(
@@ -65,9 +65,9 @@ class CoffeeHome extends StatelessWidget {
               left: 0,
               bottom: 0,
               child: Hero(
-                tag: coffees[7].name,
+                tag: coffees[4].name,
                 child: Image.asset(
-                  coffees[7].image,
+                  coffees[4].image,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -78,9 +78,9 @@ class CoffeeHome extends StatelessWidget {
               left: 0,
               bottom: _size.height * -0.8,
               child: Hero(
-                tag: coffees[9].name,
+                tag: coffees[5].name,
                 child: Image.asset(
-                  coffees[0].image,
+                  coffees[5].image,
                   fit: BoxFit.cover,
                 ),
               ),

@@ -1,7 +1,7 @@
 import 'package:app_coffee/src/coffee.dart';
 import 'package:flutter/material.dart';
 
- const double _initialPage = 8.0;
+ const double _initialPage = 5.0;
 
 class CoffeeList extends StatefulWidget {
   @override
@@ -152,8 +152,10 @@ class _CoffeeListState extends State<CoffeeList> {
                       opacity: _opacity,
                       child: Hero(
                         tag: coffees[index - 1].name,
-                        child: Image.asset(coffees[index - 1].image, 
-                        fit: BoxFit.fitHeight)
+                        child: Image.asset(
+                          coffees[index - 1].image, 
+                          fit: BoxFit.fitHeight
+                      )
                       )
                     )
                   ),
