@@ -13,6 +13,7 @@ class _CoffeeListState extends State<CoffeeList> {
   
   double _currentPage = _initialPage;
   double _textPage = _initialPage;
+  double _pricePage = _initialPage;
 
   final _pageCoffeeController = PageController(
     viewportFraction: 0.35,
@@ -20,6 +21,10 @@ class _CoffeeListState extends State<CoffeeList> {
   );
 
   final _pageTextController = PageController(
+    initialPage: _initialPage.toInt()
+  );
+
+  final _pagePriceController = PageController(
     initialPage: _initialPage.toInt()
   );
 
@@ -33,19 +38,26 @@ class _CoffeeListState extends State<CoffeeList> {
       _textPage = _currentPage;
   }
 
+  void _priceScrollListener (){
+      _pricePage = _currentPage;
+  }
+
   @override
     void initState() {
       _pageCoffeeController.addListener(  _coffeScrollListener );
       _pageTextController.addListener( _textScrollListener );
+      _pagePriceController.addListener( _priceScrollListener );
       super.initState();
     }
   
   @override
     void dispose() {
       _pageCoffeeController.removeListener(  _coffeScrollListener );
-      _pageTextController.removeListener(_textScrollListener);
+      _pageTextController.removeListener( _textScrollListener );
+      _pagePriceController.removeListener( _priceScrollListener );
       _pageCoffeeController.dispose();
       _pageTextController.dispose();
+      _pagePriceController.dispose();
       super.dispose();
     }
 
@@ -80,7 +92,8 @@ class _CoffeeListState extends State<CoffeeList> {
               child: Column(
                 children: [
                   _CoffeeName(pageTextController: _pageTextController, textPage: _textPage, size: _size),
-                  _CoffeePrice(currentPage: _currentPage)
+                  SizedBox(height: 20),
+                  _CoffeePrice(pagePriceController: _pagePriceController, textPage: _pricePage, size: _size)
                 ],
               ),
             )
@@ -90,11 +103,12 @@ class _CoffeeListState extends State<CoffeeList> {
             alignment: Alignment.bottomCenter,
             child: PageView.builder(
               controller: _pageCoffeeController,
-              itemCount: coffees.length,
+              itemCount: coffees.length + 1,
               scrollDirection: Axis.vertical,
               onPageChanged: (value){
                 if (value < coffees.length){
                   _pageTextController.animateToPage(value, duration: Duration(milliseconds:300), curve: Curves.easeOut);
+                  _pagePriceController.animateToPage(value, duration: Duration(milliseconds:300), curve: Curves.bounceInOut);
                 }
               },
               itemBuilder: (context, index){
@@ -127,33 +141,43 @@ class _CoffeeListState extends State<CoffeeList> {
 }
 
 class _CoffeePrice extends StatelessWidget {
-  final double _currentPage;
-  const _CoffeePrice({required double currentPage}) : _currentPage = currentPage;
+  const _CoffeePrice({required PageController pagePriceController, required double textPage, required Size size}): _pagePriceController = pagePriceController, _textPage = textPage, _size = size;
+  final PageController _pagePriceController;
+  final double _textPage;
+  final Size _size;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      key: Key(coffees[_currentPage.toInt()].name),
-      duration: Duration(milliseconds: 300),
-      child: Text(
-        '\$${coffees[_currentPage.toInt()].price.toStringAsFixed(2)}',
-        style: TextStyle(
-          fontSize: 30, 
-          fontWeight: FontWeight.w400,
-          color: Colors.brown[400]
-        )),
+    return Expanded(
+        child: PageView.builder(
+            controller: _pagePriceController,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: coffees.length,
+            itemBuilder: (context, index) {
+              final _opacity = (1 - (index - _textPage).abs()).clamp(0.0, 1.0);
+              return Opacity(
+                  opacity: _opacity,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: _size.width * 0.2),
+                    child: Text(
+                      coffees[index].price.toStringAsFixed(2),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.brown[400]),
+                    ),
+                  )
+              );
+            }
+        )
     );
   }
 }
 
-class _CoffeeName extends StatelessWidget {
-  const _CoffeeName({
-    Key? key,
-    required PageController pageTextController,
-    required double textPage,
-    required Size size,
-  }) : _pageTextController = pageTextController, _textPage = textPage, _size = size, super(key: key);
 
+class _CoffeeName extends StatelessWidget {
+  const _CoffeeName({required PageController pageTextController, required double textPage, required Size size}) : _pageTextController = pageTextController, _textPage = textPage, _size = size;
   final PageController _pageTextController;
   final double _textPage;
   final Size _size;
