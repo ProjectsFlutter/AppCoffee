@@ -79,7 +79,7 @@ class _CoffeeListState extends State<CoffeeList> {
             left: 0,
             top: 0,
             right: 0,
-            height: 100.0,
+            height: 150.0,
             child: TweenAnimationBuilder<double>(
               tween: Tween(begin: 1.0, end: 0.0),
               builder: (context, value, child) {
@@ -92,7 +92,6 @@ class _CoffeeListState extends State<CoffeeList> {
               child: Column(
                 children: [
                   _CoffeeName(pageTextController: _pageTextController, textPage: _textPage, size: _size),
-                  SizedBox(height: 20),
                   _CoffeePrice(pagePriceController: _pagePriceController, textPage: _pricePage, size: _size)
                 ],
               ),
@@ -108,7 +107,7 @@ class _CoffeeListState extends State<CoffeeList> {
               onPageChanged: (value){
                 if (value < coffees.length){
                   _pageTextController.animateToPage(value, duration: Duration(milliseconds:300), curve: Curves.easeOut);
-                  _pagePriceController.animateToPage(value, duration: Duration(milliseconds:300), curve: Curves.bounceInOut);
+                  _pagePriceController.animateToPage(value, duration: Duration(milliseconds:400), curve: Curves.slowMiddle);
                 }
               },
               itemBuilder: (context, index){
@@ -160,12 +159,9 @@ class _CoffeePrice extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: _size.width * 0.2),
                     child: Text(
-                      coffees[index].price.toStringAsFixed(2),
+                      '\$${coffees[index].price.toStringAsFixed(2)}',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.brown[400]),
+                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400, color: Colors.brown[400])
                     ),
                   )
               );

@@ -13,7 +13,7 @@ class CoffeeHome extends StatelessWidget {
           if(details.primaryDelta! < -20){
             Navigator.of(context).push(
               PageRouteBuilder(
-                transitionDuration: Duration(microseconds: 500),
+                transitionDuration: Duration(seconds: 1),
                 pageBuilder: (context, animation, _){
                   return FadeTransition(
                     opacity: animation,
@@ -27,7 +27,7 @@ class CoffeeHome extends StatelessWidget {
         child: Stack(
           children: [
             _GradientBackground(),
-            _Image2(size: _size),
+            // _Image2(size: _size),
             _Image3(size: _size),
             _Image4(size: _size),
             _Image5(size: _size),
