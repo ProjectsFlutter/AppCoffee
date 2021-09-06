@@ -13,9 +13,10 @@ class CoffeeList extends StatefulWidget {
 class _CoffeeListState extends State<CoffeeList> {
   bool _close = false;
   double _currentPage = _initialPage;
+  double _begin = 1.0;
+  double _end = 0.0;
 
   final _pageCoffeeController = PageController(viewportFraction: 0.35, initialPage: _initialPage.toInt());
-
   final _pageTextController = PageController(initialPage: _initialPage.toInt());
 
   void _coffeScrollListener() {
@@ -56,6 +57,8 @@ class _CoffeeListState extends State<CoffeeList> {
           color: Colors.brown,
           onPressed: () {
             _close = true;
+            _begin = 0.0;
+            _end = 1.0;
             _ValidateToExit();
             _pageCoffeeController.animateToPage(5, duration: Duration(seconds: 1), curve: Curves.linear);
           },
@@ -70,17 +73,17 @@ class _CoffeeListState extends State<CoffeeList> {
               right: 0,
               height: 100.0,
               child: TweenAnimationBuilder<double>(
-                tween: Tween(begin: 1.0, end: 0.0),
+                tween: Tween(begin: _begin, end: _end),
                 builder: (context, value, child) {
                   return Transform.translate(offset: Offset(0, -100 * value), child: child);
                 },
                 duration: Duration(milliseconds: 500),
-                child:(!_close)? Column(
+                child:Column(
                   children: [
                     _CoffeeName(pageTextController: _pageTextController, size: _size),
                     _CoffeePrice(currentPage: _currentPage.toInt())
                   ],
-                ):SizedBox.shrink(),
+                ),
               )),
           Transform.scale(
             scale: 1.7,
