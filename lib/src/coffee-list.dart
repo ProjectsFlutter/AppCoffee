@@ -69,23 +69,7 @@ class _CoffeeListState extends State<CoffeeList> {
       // ),
       body: Stack(
         children: [
-          TweenAnimationBuilder<double>(
-              duration: Duration(seconds: 1),
-              tween: Tween(begin: _beginC, end: _endC),
-              builder: (context, value, child) {
-               return Transform.translate(
-                    offset: Offset(0, -100 * value), child: child);
-              },
-              child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Color(0XFFA89276), Color(0XFFFFFF)]
-                    )
-                  )
-              )
-          ),
+          _GradientBackground(beginC: _beginC, endC: _endC),
           _GradientCircle(size: _size),
           Positioned(
             left: 0,
@@ -171,11 +155,7 @@ class _CoffeeListState extends State<CoffeeList> {
                           )
                           );
                         },
-                        child: _CoffeeImage(
-                            size: _size,
-                            value: _value,
-                            opacity: _opacity,
-                            coffee: _coffee),
+                        child: _CoffeeImage(size: _size, value: _value, opacity: _opacity, coffee: _coffee),
                       );
                     }
                 ),
@@ -184,6 +164,33 @@ class _CoffeeListState extends State<CoffeeList> {
           )
         ],
       ),
+    );
+  }
+}
+
+class _GradientBackground extends StatelessWidget {
+  final double _beginC;
+  final double _endC;
+  const _GradientBackground({required double beginC, required double endC}) : _beginC = beginC, _endC = endC;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+        duration: Duration(seconds: 1),
+        tween: Tween(begin: _beginC, end: _endC),
+        builder: (context, value, child) {
+         return Transform.translate(
+              offset: Offset(0, -100 * value), child: child);
+        },
+        child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0XFFA89276), Color(0XFFFFFF)]
+              )
+            )
+        )
     );
   }
 }
