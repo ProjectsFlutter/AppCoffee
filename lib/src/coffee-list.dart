@@ -11,10 +11,13 @@ class CoffeeList extends StatefulWidget {
 }
 
 class _CoffeeListState extends State<CoffeeList> {
-  bool _close = false;
   double _currentPage = _initialPage;
+  int _page = _initialPage.toInt();
+  bool _active = false;
+
   double _begin = 1.0;
   double _end = 0.0;
+
   double _beginC = 0.0;
   double _endC = 10.0;
 
@@ -23,15 +26,9 @@ class _CoffeeListState extends State<CoffeeList> {
 
   void _coffeScrollListener() {
     setState(() {
-      _currentPage = _pageCoffeeController.page!;
-      _ValidateToExit();
+        _currentPage = _pageCoffeeController.page!;
+        if(!_active){ _page = _currentPage.toInt();}
     });
-  }
-
-  void _ValidateToExit() {
-    if (_currentPage == 5 && _close) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => CoffeeHome()));
-    }
   }
 
   @override
@@ -77,23 +74,26 @@ class _CoffeeListState extends State<CoffeeList> {
             right: 0,
             height: 60,
             child: Padding(
-              padding: EdgeInsets.only(top: 30, left: 10),
+              padding: EdgeInsets.only(top: 20, left: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   IconButton(
                       icon: Icon(Icons.arrow_back_ios),
                       onPressed: () {
-                        _close = true;
+                        _active = true;
+
                         _begin = 0.0;
                         _end = 2.0;
 
                         _beginC = 10.0;
                         _endC = 0.0;
 
-                        _ValidateToExit();
-                        _pageCoffeeController.animateToPage(5, duration: Duration(seconds: 1), curve: Curves.linear);
-                      })
+                        _pageCoffeeController.animateToPage(5, duration: Duration(seconds: 1), curve: Curves.linear).whenComplete(() => 
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => CoffeeHome()))
+                        );
+                      }
+                  )
                 ],
               ),
             ),
@@ -108,11 +108,11 @@ class _CoffeeListState extends State<CoffeeList> {
                 builder: (context, value, child) {
                   return Transform.translate( offset: Offset(0, -100 * value), child: child);
                 },
-                duration: Duration(milliseconds: 500),
+                duration: Duration(milliseconds: 600),
                 child: Column(
                   children: [
                     _CoffeeName(pageTextController: _pageTextController, size: _size),
-                    _CoffeePrice(currentPage: _currentPage.toInt())
+                    _CoffeePrice(currentPage: _page)
                   ],
                 ),
               )),
@@ -131,7 +131,7 @@ class _CoffeeListState extends State<CoffeeList> {
                     itemCount: coffees.length + 1,
                     scrollDirection: Axis.vertical,
                     onPageChanged: (value) {
-                      if (value < coffees.length) {
+                      if (value < coffees.length && !_active) {
                         _pageTextController.animateToPage(value, duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
                       }
                     },
@@ -238,7 +238,7 @@ class _CoffeeName extends StatelessWidget {
             itemCount: coffees.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: _size.width * 0.2),
+                padding: EdgeInsets.symmetric(horizontal: _size.width * 0.1),
                 child: Hero(
                   tag: 'text_${coffees[index].name}',
                   child: Material(
