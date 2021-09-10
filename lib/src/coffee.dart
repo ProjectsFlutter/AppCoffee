@@ -3,7 +3,7 @@ import 'dart:math';
 double _doubleInRange(Random source, num start, num end) => source.nextDouble() * (end - start) + start;
 final random = Random();
 final coffees = List.generate(_names.length, (index) => Coffee(
-        image: 'assets/${index + 1}.png',
+        image: 'assets/coffees/${index + 1}.png',
         name: _names[index],
         price: _doubleInRange(random, 3, 7)
 )

@@ -24,6 +24,21 @@ class CoffeeHome extends StatelessWidget {
             );
           }
         },
+        // onHorizontalDragUpdate: (details){
+        //   if(details.primaryDelta! < -20){
+        //     Navigator.of(context).push(
+        //       PageRouteBuilder(
+        //         transitionDuration: Duration(seconds: 1),
+        //         pageBuilder: (context, animation, _){
+        //           return FadeTransition(
+        //             opacity: animation,
+        //             child: CoffeeList(),
+        //           );
+        //         }
+        //       )
+        //     );
+        //   }
+        // },        
         child: Stack(
           children: [
             _GradientBackground(),
@@ -156,7 +171,7 @@ class _CoffeeLogo extends StatelessWidget {
       left: 0,
       right: 0,
       bottom: _size.height * 0.25,
-      child: Image.asset('assets/logo.png')
+      child: Image.asset('assets/coffees/logo.png')
     );
   }
 }
