@@ -23,22 +23,7 @@ class CoffeeHome extends StatelessWidget {
               )
             );
           }
-        },
-        // onHorizontalDragUpdate: (details){
-        //   if(details.primaryDelta! < -20){
-        //     Navigator.of(context).push(
-        //       PageRouteBuilder(
-        //         transitionDuration: Duration(seconds: 1),
-        //         pageBuilder: (context, animation, _){
-        //           return FadeTransition(
-        //             opacity: animation,
-        //             child: CoffeeList(),
-        //           );
-        //         }
-        //       )
-        //     );
-        //   }
-        // },        
+        },     
         child: Stack(
           children: [
             _GradientBackground(),

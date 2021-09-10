@@ -1,6 +1,7 @@
 import 'package:app_coffee/src/coffee-details.dart';
 import 'package:app_coffee/src/coffee-home.dart';
 import 'package:app_coffee/src/coffee.dart';
+import 'package:app_coffee/src/foods-list.dart';
 import 'package:flutter/material.dart';
 
 const double _initialPage = 5.0;
@@ -155,6 +156,21 @@ class _CoffeeListState extends State<CoffeeList> {
                           )
                           );
                         },
+                        onHorizontalDragUpdate: (details) {
+                          if (details.primaryDelta! < -10) {
+                            Navigator.of(context).push(
+                              PageRouteBuilder(
+                                transitionDuration: Duration(microseconds: 650),
+                                pageBuilder: (context, animation, _) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: FoodList(),
+                                  );
+                                }
+                              )
+                            );
+                          }
+                        },   
                         child: _CoffeeImage(size: _size, value: _value, opacity: _opacity, coffee: _coffee),
                       );
                     }
