@@ -125,7 +125,7 @@ class _CoffeeListState extends State<CoffeeList> {
             child: Container(
               color: Colors.transparent,
               child: Transform.scale(
-                scale: 1.8,
+                scale: 2.0,
                 alignment: Alignment.bottomCenter,
                 child: PageView.builder(
                     controller: _pageCoffeeController,
@@ -139,8 +139,8 @@ class _CoffeeListState extends State<CoffeeList> {
                     itemBuilder: (context, index) {
                       if (index == 0) return SizedBox.shrink();
                       final _coffee = coffees[index - 1];
-                      final _result = _currentPage - index + 1;
-                      final _value = -0.42 * _result + 1;
+                      final _result = _currentPage - (index - 1);
+                      final _value = -0.4 * _result + 1;
                       final _opacity = _value.clamp(0.0, 1.0);
 
                       return GestureDetector(
@@ -316,8 +316,8 @@ class _CoffeeImage extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           transform: Matrix4.identity()
             ..setEntry(3, 2, 0.001)
-            ..translate(0.0, _size.height / 3  * (1 - _value).abs())
-            ..scale(_value),
+            ..translate(0.0, _size.height / 2.3  * (1 - _value).abs())
+            ..scale(_value.clamp(0.0, 1.0)),
           child: Opacity(
               opacity: _opacity,
               child: Hero(
