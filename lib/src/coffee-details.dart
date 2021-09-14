@@ -1,5 +1,8 @@
 import 'package:app_coffee/src/coffee.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'provider/details-provider.dart';
 
 class CoffeeDetails extends StatefulWidget {
  
@@ -11,10 +14,11 @@ class CoffeeDetails extends StatefulWidget {
 }
 
 class _CoffeeDetailsState extends State<CoffeeDetails> {
-
   @override
   Widget build(BuildContext context) {
+  // final details = Provider.of<DetailsProvider>(context);
   final _size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -24,47 +28,59 @@ class _CoffeeDetailsState extends State<CoffeeDetails> {
           color: Colors.black
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _CoffeeName(size: _size, coffee: widget.coffee),
-          SizedBox(height: 30),
-          SizedBox(
-            height: _size.height * 0.4,
-            child: Stack(
-              children: [
-                _CoffeeImage(coffee: widget.coffee),
-                _CoffeePrice(size: _size, coffee: widget.coffee)
-              ],
+      body: Consumer<DetailsProvider>(
+          builder: (context, _details, _) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _CoffeeName(size: _size, coffee: widget.coffee),
+            SizedBox(height: 30),
+            SizedBox(
+              height: _size.height * 0.5,
+              child: Stack(
+                children: [
+                  _CoffeeImage(coffee: widget.coffee, details: _details ),
+                  _CoffeePrice(size: _size, coffee: widget.coffee)
+                ],
+              ),
             ),
-          ),
-          BottomNavigationBar(
-            backgroundColor: Colors.transparent,
-            selectedItemColor: Colors.brown,
-            unselectedItemColor: Colors.grey,
-            showSelectedLabels: true,
-            showUnselectedLabels: false,
-            selectedFontSize: 18,
-            elevation: 0,
-            currentIndex: 0,
-            onTap: (index)=> null,
-            items: [
-              BottomNavigationBarItem(
-                  icon: ImageIcon(AssetImage("assets/coffees/taza_s.png"), size: 50), 
-                  label: "S",
-              ),
-              BottomNavigationBarItem(
-                  icon: ImageIcon(AssetImage("assets/coffees/taza_m.png"), size: 65), 
-                  label: "M",
-              ),
-              BottomNavigationBarItem(
-                  icon: ImageIcon(AssetImage("assets/coffees/taza_l.png"), size: 60), 
-                  label: "L",
-              )
-            ],
-          )
-        ],
+            _BottomNavigationBar(details: _details)
+          ],
+        ),
       ), 
+    );
+  }
+}
+
+class _BottomNavigationBar extends StatelessWidget {
+  final DetailsProvider details;
+  const _BottomNavigationBar({required this.details});
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      backgroundColor: Colors.transparent,
+      selectedItemColor: Colors.brown,
+      unselectedItemColor: Colors.grey,
+      showSelectedLabels: true,
+      showUnselectedLabels: false,
+      selectedFontSize: 18,
+      elevation: 0,
+      currentIndex: details.selectItem,
+      onTap: (index)=> details.selectItem = index,
+      items: [
+        BottomNavigationBarItem(
+            icon: ImageIcon(AssetImage("assets/coffees/taza_s.png"), size: 50), 
+            label: "S",
+        ),
+        BottomNavigationBarItem(
+            icon: ImageIcon(AssetImage("assets/coffees/taza_m.png"), size: 65), 
+            label: "M",
+        ),
+        BottomNavigationBarItem(
+            icon: ImageIcon(AssetImage("assets/coffees/taza_l.png"), size: 60), 
+            label: "L",
+        )
+      ],
     );
   }
 }
@@ -109,14 +125,18 @@ class _CoffeePrice extends StatelessWidget {
 
 class _CoffeeImage extends StatelessWidget {
   final Coffee coffee;
-  const _CoffeeImage({required this.coffee});
+  final DetailsProvider details;
+  const _CoffeeImage({required this.coffee, required this.details});
 
   @override
   Widget build(BuildContext context) {
     return Positioned.fill(
       child: Hero(
         tag: coffee.name,
-        child: Image.asset(coffee.image, fit: BoxFit.fitHeight,),
+        child: Transform.scale(
+          scale: details.scale,
+          child: Image.asset(coffee.image, fit: BoxFit.fitHeight)
+        ),
       ),
     );
   }
