@@ -1,7 +1,6 @@
 import 'package:app_coffee/src/coffee.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'provider/details-provider.dart';
 
 class CoffeeDetails extends StatefulWidget {
@@ -14,9 +13,10 @@ class CoffeeDetails extends StatefulWidget {
 }
 
 class _CoffeeDetailsState extends State<CoffeeDetails> {
+ 
   @override
   Widget build(BuildContext context) {
-  // final details = Provider.of<DetailsProvider>(context);
+    
   final _size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -133,10 +133,11 @@ class _CoffeeImage extends StatelessWidget {
     return Positioned.fill(
       child: Hero(
         tag: coffee.name,
-        child: Transform.scale(
+        child: AnimatedScale(
           scale: details.scale,
+          duration: Duration(milliseconds: 500),
           child: Image.asset(coffee.image, fit: BoxFit.fitHeight)
-        ),
+        )
       ),
     );
   }
