@@ -80,23 +80,18 @@ class _CoffeeDetailsState extends State<CoffeeDetails> with SingleTickerProvider
 }
 
 class _CoffeeAdd extends StatelessWidget {
-  const _CoffeeAdd({
-    required Size size,
-    required AnimationController controller,
-    required Animation<double> animationIconAdd,
-  }) : _size = size, _controller = controller, _animationIconAdd = animationIconAdd;
-
-  final Size _size;
-  final AnimationController _controller;
-  final Animation<double> _animationIconAdd;
+  const _CoffeeAdd({required this.size, required this.controller, required this.animationIconAdd});
+  final Size size;
+  final AnimationController controller;
+  final Animation<double> animationIconAdd;
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: _size.height * 0.02,
-      right:_size.width * 0.2,
+      top: size.height * 0.02,
+      right: size.width * 0.2,
       child: AnimatedBuilder(
-        animation: _controller,
+        animation: controller,
         child: Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,               
@@ -117,7 +112,7 @@ class _CoffeeAdd extends StatelessWidget {
         ),
         builder: (BuildContext context, Widget? child) {
           return Transform.translate(
-            offset: Offset(200 * _animationIconAdd.value, 0.0),
+            offset: Offset(200 * animationIconAdd.value, 0.0),
             child: child,
           );
         },
@@ -127,7 +122,6 @@ class _CoffeeAdd extends StatelessWidget {
 }
 
 class _ShoppingBagButton extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -244,14 +238,14 @@ class _BottomNavigationBarTemp extends StatelessWidget {
 }
 
 class _CoffeePrice extends StatelessWidget {
-  const _CoffeePrice({required Size size, required this.coffee}) : _size = size;
-  final Size _size;
+  const _CoffeePrice({required this.size, required this.coffee});
+  final Size size;
   final Coffee coffee;
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: _size.width * 0.05,
+      left: size.width * 0.05,
       bottom: 0,
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 1.0, end: 0.0),
@@ -302,14 +296,14 @@ class _CoffeeImage extends StatelessWidget {
 }
 
 class _CoffeeName extends StatelessWidget {
-  final Size _size;
+  const _CoffeeName({required this.size, required this.coffee});
+  final Size size;
   final Coffee coffee;
-  const _CoffeeName({required Size size,required this.coffee}) : _size = size;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _size.width * 0.2),
+      padding: EdgeInsets.symmetric(horizontal: size.width * 0.2),
       child: Hero(
         tag:  'text_${coffee.name}',
         child: Material(
