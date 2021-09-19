@@ -16,16 +16,14 @@ class CoffeeDetails extends StatefulWidget {
 class _CoffeeDetailsState extends State<CoffeeDetails> with SingleTickerProviderStateMixin {
 
   late AnimationController _controller;
-  late Animation<double> _animationScaleOut;
-  late Animation<double> _animationScaleIn;
+  late Animation<double> _animationIconAdd;
 
 
   @override
   void initState() {
     _controller = AnimationController(vsync: this, duration: Duration(seconds: 1));
-    _animationScaleOut = CurvedAnimation(parent: _controller, curve: Interval(0.0, 0.5));
-    _animationScaleIn = CurvedAnimation(parent: _controller, curve: Interval(0.5, 1.0));
-    // _controller.forward();
+    _animationIconAdd = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+    _controller.forward();
     super.initState();
   }
 
@@ -45,6 +43,10 @@ class _CoffeeDetailsState extends State<CoffeeDetails> with SingleTickerProvider
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: BackButton(
+          onPressed: (){
+            _controller.reverse();
+             Navigator.maybePop(context);
+          },
           color: Colors.black
         ),
         actions: [_ShoppingBagButton()],
@@ -61,7 +63,8 @@ class _CoffeeDetailsState extends State<CoffeeDetails> with SingleTickerProvider
               child: Stack(
                 children: [
                   _CoffeeImage(coffee: widget.coffee, details: _details ),
-                  _CoffeePrice(size: _size, coffee: widget.coffee)
+                  _CoffeePrice(size: _size, coffee: widget.coffee),
+                  _CoffeeAdd(size: _size, controller: _controller, animationIconAdd: _animationIconAdd),
                 ],
               ),
             ),
@@ -72,6 +75,53 @@ class _CoffeeDetailsState extends State<CoffeeDetails> with SingleTickerProvider
           ],
         ),
       ), 
+    );
+  }
+}
+
+class _CoffeeAdd extends StatelessWidget {
+  const _CoffeeAdd({
+    required Size size,
+    required AnimationController controller,
+    required Animation<double> animationIconAdd,
+  }) : _size = size, _controller = controller, _animationIconAdd = animationIconAdd;
+
+  final Size _size;
+  final AnimationController _controller;
+  final Animation<double> _animationIconAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: _size.height * 0.02,
+      right:_size.width * 0.2,
+      child: AnimatedBuilder(
+        animation: _controller,
+        child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,               
+              boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 9,
+                offset: Offset(9,9),
+              )
+              ]
+            ),
+            child: IconButton(
+              onPressed: (){}, 
+              icon: Icon(Icons.add_circle_outlined, size: 50.0),
+              color: Colors.white,
+            ),
+        ),
+        builder: (BuildContext context, Widget? child) {
+          return Transform.translate(
+            offset: Offset(200 * _animationIconAdd.value, 0.0),
+            child: child,
+          );
+        },
+      )
     );
   }
 }
