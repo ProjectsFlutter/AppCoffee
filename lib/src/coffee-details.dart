@@ -1,6 +1,8 @@
 // ignore_for_file: dead_code
 import 'package:app_coffee/src/coffee.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'provider/details-provider.dart';
 
@@ -17,7 +19,6 @@ class _CoffeeDetailsState extends State<CoffeeDetails> with SingleTickerProvider
 
   late AnimationController _controller;
   late Animation<double> _animationIconAdd;
-
 
   @override
   void initState() {
@@ -62,9 +63,9 @@ class _CoffeeDetailsState extends State<CoffeeDetails> with SingleTickerProvider
               height: _size.height * 0.5,
               child: Stack(
                 children: [
-                  _CoffeeImage(coffee: widget.coffee, details: _details ),
+                  _CoffeeImage(coffee: widget.coffee, details: _details),
                   _CoffeePrice(size: _size, coffee: widget.coffee),
-                  _CoffeeAdd(size: _size, controller: _controller, animationIconAdd: _animationIconAdd),
+                  _CoffeeAdd(size: _size, controller: _controller, animationIconAdd: _animationIconAdd, details: _details),
                 ],
               ),
             ),
@@ -80,11 +81,11 @@ class _CoffeeDetailsState extends State<CoffeeDetails> with SingleTickerProvider
 }
 
 class _CoffeeAdd extends StatelessWidget {
-  const _CoffeeAdd({required this.size, required this.controller, required this.animationIconAdd});
+  const _CoffeeAdd({required this.size, required this.controller, required this.animationIconAdd,required this.details});
   final Size size;
   final AnimationController controller;
   final Animation<double> animationIconAdd;
-
+  final DetailsProvider details;
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -105,7 +106,7 @@ class _CoffeeAdd extends StatelessWidget {
               ]
             ),
             child: IconButton(
-              onPressed: (){}, 
+              onPressed: ()=> details.startAnimationCoffee(), 
               icon: Icon(Icons.add_circle_outlined, size: 50.0),
               color: Colors.white,
             ),
@@ -206,7 +207,7 @@ class _BottomNavigationBarTemp extends StatelessWidget {
           ),
           Expanded(
             child: GestureDetector(
-              onTap: ()=>details.selectTemp='cold',
+              onTap:()=> details.selectTemp='cold',
               child: Container(
                 height: 40.0,
                 decoration:(details.selectTemp == "cold")? BoxDecoration(
@@ -275,26 +276,6 @@ class _CoffeePrice extends StatelessWidget {
   }
 }
 
-class _CoffeeImage extends StatelessWidget {
-  const _CoffeeImage({required this.coffee, required this.details});
-  final Coffee coffee;
-  final DetailsProvider details;
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Hero(
-        tag: coffee.name,
-        child: AnimatedScale(
-          scale: details.selectScale,
-          duration: const Duration(milliseconds: 500),
-          child: Image.asset(coffee.image, fit: BoxFit.fitHeight)
-        )
-      ),
-    );
-  }
-}
-
 class _CoffeeName extends StatelessWidget {
   const _CoffeeName({required this.size, required this.coffee});
   final Size size;
@@ -322,3 +303,112 @@ class _CoffeeName extends StatelessWidget {
     );
   }
 }
+
+class _CoffeeImage extends StatefulWidget {
+  const _CoffeeImage({required this.coffee, required this.details});
+  final Coffee coffee;
+  final DetailsProvider details;
+
+  @override
+  State<_CoffeeImage> createState() => _CoffeeImageState();
+}
+
+class _CoffeeImageState extends State<_CoffeeImage> {
+  final _keyCoffee = GlobalKey();
+  OverlayEntry? _overlayEntry;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) { 
+      widget.details.notifierCoffeAnimation.addListener((){
+         if( widget.details.notifierCoffeAnimation.value){
+          _addCoffeeToCart();
+         }
+      });
+    });
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+
+    return Positioned.fill(
+      child: Hero(
+        tag: widget.coffee.name,
+        child: ValueListenableBuilder<CoffeeMetaData?>(
+          valueListenable: widget.details.notifierCoffeeImage,
+          builder: (context, data, child) {
+            if(data != null){
+              Future.microtask(() => _startCoffeeBoxAnimation(data));
+            }
+            return RepaintBoundary(
+              key: _keyCoffee,
+              child: AnimatedScale(
+                scale: widget.details.selectScale,
+                duration: const Duration(milliseconds: 500),
+                child: Image.asset(widget.coffee.image, fit: BoxFit.fitHeight)
+              ),
+            );
+          }
+        )
+      ),
+    );
+  }
+
+  void _addCoffeeToCart(){
+    if(_keyCoffee.currentContext != null){
+      RenderRepaintBoundary boundary  = _keyCoffee.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      widget.details.tranformToImage(boundary);
+    }
+  }
+  void _startCoffeeBoxAnimation(CoffeeMetaData data){
+    if(_overlayEntry == null){
+      _overlayEntry = OverlayEntry(builder: (context){
+        return CoffeOrderAnimation(
+          metadata: data, 
+          onTap: () {  
+            _overlayEntry!.remove();
+            _overlayEntry = null;
+            widget.details.reset();
+          }
+        );
+      });
+      Overlay.of(context)!.insert(_overlayEntry!);
+    }
+  }
+}
+
+class CoffeOrderAnimation extends StatefulWidget {
+  const CoffeOrderAnimation({required this.metadata, required this.onTap});
+  final CoffeeMetaData metadata;
+  final VoidCallback onTap;
+
+  @override
+  _CoffeOrderAnimationState createState() => _CoffeOrderAnimationState();
+}
+
+class _CoffeOrderAnimationState extends State<CoffeOrderAnimation> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    _controller = AnimationController(vsync: this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Center(
+        child: Image.memory(widget.metadata.imageBytes),
+      ),
+    );
+  }
+}
+
