@@ -22,10 +22,10 @@ class _CoffeeDetailsState extends State<CoffeeDetails> with SingleTickerProvider
 
   @override
   void initState() {
+    super.initState();
     _controller = AnimationController(vsync: this, duration: Duration(seconds: 1));
     _animationIconAdd = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
     _controller.forward();
-    super.initState();
   }
 
   @override
@@ -122,14 +122,77 @@ class _CoffeeAdd extends StatelessWidget {
   }
 }
 
-class _ShoppingBagButton extends StatelessWidget {
+class _ShoppingBagButton extends StatefulWidget {
+  @override
+  State<_ShoppingBagButton> createState() => _ShoppingBagButtonState();
+}
+
+class _ShoppingBagButtonState extends State<_ShoppingBagButton> with SingleTickerProviderStateMixin{
+  late AnimationController _controller;
+  late Animation<double> _animationScaleOut;
+  late Animation<double> _animationScaleIn;
+  int _counter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _animationScaleOut = CurvedAnimation(parent: _controller, curve: Interval(0.0, 0.5));
+    _animationScaleIn = CurvedAnimation(parent: _controller, curve: Interval(0.5, 1.0));
+    
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      final provider = Provider.of<DetailsProvider>(context, listen: false);
+      provider.notifierCartIconAnimation.addListener((){
+        _counter = provider.notifierCartIconAnimation.value;
+        _controller.forward(from: 0.0);
+      });
+    }); 
+  }
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: (){},
-      icon: Icon(Icons.shopping_bag_outlined),
-      iconSize: 27.0,
-      color: Colors.black,
+  
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (_, _child) {
+        late double _scale;
+        const _scaleFactor = 0.5;
+        if(_animationScaleOut.value < 1.0){
+          _scale = 1 + _scaleFactor * _animationScaleOut.value;
+        }else if(_animationScaleIn.value <= 1.0){
+           _scale = (1 + _scaleFactor) - _scaleFactor * _animationScaleIn.value;
+        }
+        return Transform.scale(
+          alignment: Alignment.center,
+          scale: _scale,
+          child: Stack(
+            children:[
+              IconButton(
+                onPressed: (){},
+                icon: Icon(Icons.shopping_bag_outlined),
+                iconSize: 27.0,
+                color: Colors.black,
+            ),
+            if(_animationScaleOut.value > 0.0)
+            Positioned(
+              top: 8.0,
+              right: 0.0,
+              child: Transform.scale(
+                scale: _animationScaleOut.value,
+                child: CircleAvatar(
+                  radius: 10,
+                  backgroundColor: Colors.red,
+                  child: Text(_counter.toString())
+                ),
+              ),
+            )
+            ]
+      ),
+      );
+      }
     );
   }
 }
@@ -319,6 +382,7 @@ class _CoffeeImageState extends State<_CoffeeImage> {
 
   @override
   void initState() {
+    super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) { 
       widget.details.notifierCoffeAnimation.addListener((){
          if( widget.details.notifierCoffeAnimation.value){
@@ -326,7 +390,6 @@ class _CoffeeImageState extends State<_CoffeeImage> {
          }
       });
     });
-    super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -365,7 +428,7 @@ class _CoffeeImageState extends State<_CoffeeImage> {
       _overlayEntry = OverlayEntry(builder: (context){
         return CoffeOrderAnimation(
           metadata: data, 
-          onTap: () {  
+          onComplete: () {  
             _overlayEntry!.remove();
             _overlayEntry = null;
             widget.details.reset();
@@ -378,9 +441,9 @@ class _CoffeeImageState extends State<_CoffeeImage> {
 }
 
 class CoffeOrderAnimation extends StatefulWidget {
-  const CoffeOrderAnimation({required this.metadata, required this.onTap});
+  const CoffeOrderAnimation({required this.metadata, required this.onComplete});
   final CoffeeMetaData metadata;
-  final VoidCallback onTap;
+  final VoidCallback onComplete;
 
   @override
   _CoffeOrderAnimationState createState() => _CoffeOrderAnimationState();
@@ -388,11 +451,21 @@ class CoffeOrderAnimation extends StatefulWidget {
 
 class _CoffeOrderAnimationState extends State<CoffeOrderAnimation> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  late Animation<double> _coffeeExitScaleAnimation;
+  late Animation<double> _coffeeExitToCartAnimation;
 
   @override
   void initState() {
-    _controller = AnimationController(vsync: this);
     super.initState();
+    _controller = AnimationController(vsync: this, duration: Duration(seconds: 1));
+    _coffeeExitScaleAnimation = Tween(begin: 1.0, end: 1.3).animate(CurvedAnimation(curve: Interval(0.0, 0.2), parent: _controller)); 
+    _coffeeExitToCartAnimation = CurvedAnimation(curve: Interval(0.4, 1.0), parent: _controller); 
+    _controller.addStatusListener((status) {
+        if(status == AnimationStatus.completed){
+          widget.onComplete();
+        }
+    });
+    _controller.forward();
   }
 
   @override
@@ -403,10 +476,33 @@ class _CoffeOrderAnimationState extends State<CoffeOrderAnimation> with SingleTi
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: Center(
-        child: Image.memory(widget.metadata.imageBytes),
+    final data = widget.metadata;
+    return Positioned(
+      top: data.position.dy,
+      left: data.position.dx,
+      width: data.size.width,
+      height: data.size.height,
+      child: AnimatedBuilder(
+        animation: _controller,
+        child: Image.memory(data.imageBytes),
+        builder: (_, _child) {
+          final moveX = _coffeeExitToCartAnimation.value > 0 ? data.position.dx + data.size.width / 2 *  _coffeeExitToCartAnimation.value : 0.0;
+          final moveY = _coffeeExitToCartAnimation.value > 0 ? -data.size.height / 1.1 * _coffeeExitToCartAnimation.value : 0.0;
+          return Opacity(
+            opacity: 1 - _coffeeExitToCartAnimation.value,
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+              ..translate(moveX, moveY)
+              ..scale(_coffeeExitScaleAnimation.value),
+              child: Transform.scale(
+                alignment: Alignment.center,
+                scale: 1 - _coffeeExitToCartAnimation.value,
+                child: _child
+              ),
+            ),
+          );
+        }
       ),
     );
   }

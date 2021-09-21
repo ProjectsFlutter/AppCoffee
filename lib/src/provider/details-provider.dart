@@ -16,6 +16,7 @@ class DetailsProvider with ChangeNotifier {
   double _selectScale = 0.6;
   String _selectTemp = 'hot';
   ValueNotifier<bool> _notifierCoffeAnimation = ValueNotifier(false);
+  ValueNotifier<int> _notifierCartIconAnimation = ValueNotifier(0);
   ValueNotifier<CoffeeMetaData?> _notifierCoffeeImage = ValueNotifier(null);
 
  get selectItem {
@@ -32,6 +33,10 @@ class DetailsProvider with ChangeNotifier {
 
  get notifierCoffeAnimation{
    return _notifierCoffeAnimation;
+ }
+
+ get notifierCartIconAnimation{
+   return _notifierCartIconAnimation;
  }
 
  get notifierCoffeeImage {
@@ -62,6 +67,7 @@ class DetailsProvider with ChangeNotifier {
 void reset(){
   _notifierCoffeAnimation.value = false;
   _notifierCoffeeImage.value = null;
+  _notifierCartIconAnimation.value++;
  }
  void startAnimationCoffee(){
    _notifierCoffeAnimation.value = true;
