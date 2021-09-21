@@ -1,4 +1,4 @@
-import 'package:app_coffee/src/coffee-details.dart';
+import 'package:app_coffee/src/coffee_detail/CoffeeDetail.dart';
 import 'package:app_coffee/src/coffee-home.dart';
 import 'package:app_coffee/src/coffee.dart';
 import 'package:app_coffee/src/foods-list.dart';
@@ -150,7 +150,7 @@ class _CoffeeListState extends State<CoffeeList> {
                               pageBuilder: (context, animation, _) {
                                 return FadeTransition(
                                   opacity: animation,
-                                  child: CoffeeDetails(coffee: _coffee),
+                                  child: CoffeeDetail(coffee: _coffee),
                                 );
                               }
                           )

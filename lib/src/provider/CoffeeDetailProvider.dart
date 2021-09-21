@@ -11,7 +11,7 @@ class CoffeeMetaData{
   final Size size;
 
 }
-class DetailsProvider with ChangeNotifier {
+class CoffeeDetailProvider with ChangeNotifier {
   int _selectItem = 0;
   double _selectScale = 0.6;
   String _selectTemp = 'hot';
