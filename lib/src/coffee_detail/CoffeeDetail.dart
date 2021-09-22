@@ -4,9 +4,11 @@ import 'package:app_coffee/src/coffee_detail/CoffeeSize.dart';
 import 'package:app_coffee/src/coffee_detail/CoffeeTemperature.dart';
 import 'package:app_coffee/src/coffee_detail/RepaintCoffee.dart';
 import 'package:app_coffee/src/coffee_detail/ShoppingCart.dart';
+import 'package:app_coffee/src/provider/CoffeeDetailProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 
 class CoffeeDetail extends StatefulWidget {
  
@@ -22,6 +24,7 @@ class _CoffeeDetailState extends State<CoffeeDetail>{
   @override
   Widget build(BuildContext context) {
     
+  final _coffeeDetail = Provider.of<CoffeeDetailProvider>(context, listen: false);
   final _size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -30,6 +33,10 @@ class _CoffeeDetailState extends State<CoffeeDetail>{
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: BackButton(
+          onPressed: (){
+            _coffeeDetail.notifierAddCoffeeAnimation = true;
+            Navigator.maybePop(context);
+          },
           color: Colors.black
         ),
         actions: [ShoppingCart()],

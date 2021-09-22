@@ -20,6 +20,15 @@ class _AddCoffeeState extends State<AddCoffee> with SingleTickerProviderStateMix
     _controller = AnimationController(vsync: this, duration: Duration(seconds: 1));
     _animationAddIcon = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
     _controller.forward();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      final _coffeeDetail = Provider.of<CoffeeDetailProvider>(context, listen: false);
+      _coffeeDetail.notifierAddCoffeeAnimation.addListener(() {
+        if (_coffeeDetail.notifierAddCoffeeAnimation.value) {
+        if (!mounted) return;
+         _controller.reverse();
+        }
+      });
+    });
   }
   @override
   void dispose() {
@@ -29,6 +38,8 @@ class _AddCoffeeState extends State<AddCoffee> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     final _coffeeDetail = Provider.of<CoffeeDetailProvider>(context, listen: false);
+   _coffeeDetail.notifierAddCoffeeAnimation = false;
+   
     return Positioned(
         top: widget.size.height * 0.02,
         right: widget.size.width * 0.2,
